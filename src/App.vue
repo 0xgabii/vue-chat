@@ -1,15 +1,22 @@
 <template>
   <div id="app">
-    <button @click="logout">logout</button>
-    <button @click="login">login</button>
-    <hello></hello>
+    <landing-page 
+      v-if="!auth"
+      :auth="login" />
+    <chat-page 
+      v-if="auth"
+      :auth="logout"
+      :userList="userList"
+      :chatList="chatList"
+      :sendChat="sendChat" />
   </div>
 </template>
 
 <script>
 import * as firebase from 'firebase';
 
-import Hello from './components/Hello'
+import LandingPage from './components/LandingPage'
+import ChatPage from './components/ChatPage'
 
 // set Firebase
 const config = {
@@ -22,18 +29,37 @@ const config = {
 firebase.initializeApp(config);
 
 const database = firebase.database();
+const chats = database.ref('chats');
+const users = database.ref('users');
 const provider = new firebase.auth.GoogleAuthProvider();
 
 export default {
   name: 'app',
   data() {
     return {
-      auth: false,
+      auth: true,
+      currentUser: {}
     }
+  },
+  firebase: {
+    chatList: chats,
+    userList: users,
   },
   created() {
     firebase.auth().onAuthStateChanged(user => {
-      this.auth = user ? true : false;
+      if(user) {
+        const currentUser = {
+          uid: user.uid,
+          username: user.displayName,
+          profile_picture : user.photoURL,
+        }
+        this.currentUser = currentUser;
+        database.ref('users/' + user.uid).set(currentUser);
+
+        this.auth = true;
+      } else{
+        this.auth = false;
+      }
     }); 
   },
   methods: {
@@ -44,21 +70,33 @@ export default {
       firebase.auth().signOut().then(() => {
         this.auth = false;
       }, error => {console.log(error)});
+    },
+    sendChat(data) {
+      chats.push({
+        user: this.currentUser.uid,
+        content: data,
+        time: new Date().toString()
+      });
     }
   },
   components: {
-    Hello
+    ChatPage,
+    LandingPage
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-weight: 400;
+}
+body {
+  font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
 }
 </style>

@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <button @click="logout">logout</button>
+    <button @click="login">login</button>
     <hello></hello>
   </div>
 </template>
@@ -22,37 +24,27 @@ firebase.initializeApp(config);
 const database = firebase.database();
 const provider = new firebase.auth.GoogleAuthProvider();
 
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    // User is signed in.
-  } else {
-    firebase.auth().signInWithRedirect(provider);
-    firebase.auth().getRedirectResult().then(function(result) {
-      if (result.credential) {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        var token = result.credential.accessToken;
-        // ...
-      }
-      // The signed-in user info.
-      var user = result.user;
-    }).catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      // ...
-    }); 
-  }
-  console.log(user);
-});
-
 export default {
   name: 'app',
+  data() {
+    return {
+      auth: false,
+    }
+  },
   created() {
-
+    firebase.auth().onAuthStateChanged(user => {
+      this.auth = user ? true : false;
+    }); 
+  },
+  methods: {
+    login() {
+      firebase.auth().signInWithRedirect(provider);        
+    },
+    logout() {
+      firebase.auth().signOut().then(() => {
+        this.auth = false;
+      }, error => {console.log(error)});
+    }
   },
   components: {
     Hello

@@ -95,6 +95,8 @@ export default {
       if(fileType != 'png' && fileType != 'gif' 
           && fileType != 'jpg' && fileType != 'jpeg'){
         e.target.value = '';
+        this.visible.box= true;
+        this.visible.file= false;
         return;
       }
 
@@ -120,7 +122,9 @@ export default {
   transition: all 0.5s;
 }
 .url-enter,
-.thumbnail-enter{
+.url-leave-to,
+.thumbnail-enter,
+.thumbnail-leave-to{
   opacity: 0;
 }
 

@@ -10,12 +10,22 @@
     <transition-group tag="div" class="chat-list" name="chat-list">        
       <div class="chat" 
         v-for="item in chatList"
-        :key="item.user">
+        :key="item.user"
+        :class="{myChat: item.user == currentUser.uid}">
         <div class="info">
-          <img class="info-thumbnail" :src="userList[_.findIndex(userList, {uid: item.user})].profile_picture" alt="profile">       
+          <img 
+            class="info-thumbnail" 
+            v-if="item.user != currentUser.uid"
+            :src="userList[_.findIndex(userList, {uid: item.user})].picture">       
           <div class="info-text">
-            <span class="username">{{userList[_.findIndex(userList, {uid: item.user})].username}}</span>
-            <span class="time">{{new Date(item.time).getHours() + ':' + new Date(item.time).getMinutes()}}</span>
+            <span 
+              class="username"
+              v-if="item.user != currentUser.uid">
+              {{userList[_.findIndex(userList, {uid: item.user})].username}}
+            </span>
+            <span class="time">
+              {{new Date(item.time).getHours() + ':' + new Date(item.time).getMinutes()}}
+            </span>
           </div> 
         </div>
         <div class="content" v-html="item.content"></div>        
@@ -53,6 +63,8 @@ import PhotoUpload from './modal/PhotoUpload'
 const database = Firebase.database();
 const chats = database.ref('chats');
 const users = database.ref('users');
+const online = database.ref('online');
+
 // for image store
 const storageRef = Firebase.storage().ref();
 
@@ -89,6 +101,7 @@ export default {
   firebase: {
     chatList: chats,
     userList: users,
+    onlineList: online,
   },
   computed: {
     // lodash
@@ -96,17 +109,13 @@ export default {
       return _;
     },
     online() {
-      return 'online: ' + this.userList.length;
+      return 'online: ' + this.onlineList.length;
     },
   },
   methods: {
     sendChat(data) {
       if(data != ''){
-        chats.push({
-          user: this.currentUser.uid,
-          content: XSSfilter(data),
-          time: new Date().toString()
-        });
+        this.pushChat(XSSfilter(data));
         this.newChat = '';
       }
     },
@@ -114,19 +123,21 @@ export default {
       if(obj.type == 'file'){
         const file = obj.data;
         const filename = file.name;
-
         storageRef.child('images/' + filename).put(file).then(snapshot => {
-          chats.push({
-            user: this.currentUser.uid,
-            content: `<img src="${snapshot.downloadURL}" />`,
-            time: new Date().toString()
-          });
+          this.pushChat(`<img src="${snapshot.downloadURL}" />`);
         });        
       } else{
-        // img url..
-      }      
+        this.pushChat(`<img src="${obj.data}" />`);
+      }
       this.modalClose();
     },
+    pushChat(content) {
+      chats.push({
+        user: this.currentUser.uid,
+        content: content,
+        time: new Date().toString()
+      });
+    },    
     modalClose() {
       Object.keys(this.modals).forEach(key => { this.modals[key] = false });
     }
@@ -198,6 +209,9 @@ header > button:hover {
 .chat {
   padding: 0.5rem;
 }
+.chat.myChat {
+  text-align: right;
+}
 .info {
   position: relative;
   padding-bottom: 0.5rem;
@@ -231,10 +245,7 @@ header > button:hover {
   box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
   
 }
-.content.me {
-  background-color: #673ab7;
-  color: white;
-}
+
 .content > img {
   max-width: 40vw;
   max-height: 40vh;

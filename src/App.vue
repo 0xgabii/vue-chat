@@ -26,17 +26,18 @@ export default {
       auth: true,
       currentUser: {}
     }
-  },  
+  },
   created() {
     Firebase.auth().onAuthStateChanged(user => {
       if(user) {
-        const currentUser = {
+        const userObj = {
           uid: user.uid,
           username: user.displayName,
-          profile_picture : user.photoURL,
+          picture : user.photoURL,
         }
-        this.currentUser = currentUser;
-        database.ref('users/' + user.uid).set(currentUser);
+        this.currentUser = userObj;
+        database.ref('users/' + user.uid).set(userObj);
+        database.ref('online/' + user.uid).set(userObj);
 
         this.auth = true;
       } else{
@@ -50,7 +51,7 @@ export default {
     },
     logout() {
       this.auth = false;
-      database.ref('users/' + this.currentUser.uid).remove();
+      database.ref('online/' + this.currentUser.uid).remove();
       Firebase.auth().signOut().then(() => {}, errror => {console.log(error)});
     },
   },

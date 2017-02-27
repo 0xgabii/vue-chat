@@ -7,20 +7,32 @@
       </div>
       <div class="modal-content">                
 
-        <div class="box" @click="openFile" v-if="thumbnail == ''">
+        <div class="box" 
+          v-if="visible.box"
+          @click="selectFile">
           <i class="material-icons">insert_drive_file</i>
           <span>local file</span>          
-        </div>
-        <div class="box" v-if="thumbnail == ''">
+        </div>        
+
+        <div
+          class="box" 
+          v-if="visible.box"
+          @click="selectUrl">
           <i class="material-icons">link</i>
           <span>photo url</span>
         </div>
 
-        <input type="file" id="file" @change="localFileSend">
+        <transition name="url">
+          <div class="url" v-if="visible.url">
+            <input class="input" type="text" v-model="imgURL" placeholder="type url...">
+          </div>
+        </transition>
+
+        <input type="file" id="file" @change="filechange">
         
         <transition name="thumbnail">
-          <div class="thumbnail" v-if="thumbnail != ''">
-            <img :src="thumbnail">     
+          <div class="thumbnail" v-if="visible.file">
+            <img :src="dataURL">     
           </div>
         </transition>
 
@@ -48,24 +60,45 @@ export default {
         type: '',
         data: '',
       },
-      thumbnail: '',
+      visible: {
+        box: true,
+        file: false,
+        url: false,
+      },
+      dataURL: '',
+      imgURL: ''
+    }
+  },
+  watch: {
+    imgURL(url) {
+      this.photo = {
+        type: 'text',
+        data: url
+      }
     }
   },
   methods: {
-    openFile() {
+    selectFile() {
+      this.visible.box = false;
+      this.visible.file = true;
       document.getElementById('file').click();
     },
-    localFileSend(e) {
+    selectUrl() {
+      this.visible.box = false;
+      this.visible.url = true;
+    },
+    filechange(e) {
       const file = e.target.files[0];
-      const fileType = file.type;
+      // in IE, can't recognition file.type 
+      const fileType = file.name.split('.').pop();      
 
-      if(fileType != 'image/jpeg' && fileType != 'image/gif' && fileType != 'image/png'){
-        alert('photo only!');
+      if(fileType != 'png' && fileType != 'gif' 
+          && fileType != 'jpg' && fileType != 'jpeg'){
         e.target.value = '';
         return;
       }
 
-      this.thumbnail = URL.createObjectURL(file);            
+      this.dataURL = URL.createObjectURL(file);            
       this.photo = {
         type: 'file',
         data: file
@@ -73,7 +106,8 @@ export default {
 
       e.target.value = '';     
     },
-    photoUpload() {
+    photoUpload() {      
+      if(this.photo.data == '' || this.photo.type == '') return;
       this.sendImage(this.photo);
     }
   }
@@ -81,9 +115,11 @@ export default {
 </script>
 
 <style scoped>
+.url-enter-active,
 .thumbnail-enter-active{
   transition: all 0.5s;
 }
+.url-enter,
 .thumbnail-enter{
   opacity: 0;
 }
@@ -116,5 +152,17 @@ export default {
 .thumbnail > img{
   max-width: 100%;
   max-height: 50vh;
+}
+.url {
+  width: 100%;
+  margin: 0.5rem 0;
+}
+.url > input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid gray;
+  border-radius: 3px;
+  outline: none;
+  font-size: 1.1rem;
 }
 </style>

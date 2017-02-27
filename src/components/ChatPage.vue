@@ -36,26 +36,14 @@
 </template>
 
 <script>
+import Firebase from '../firebaseHelper'
 import _ from 'lodash'
-import * as firebase from 'firebase';
 
-window.firebase = firebase;
-
-// set Firebase
-const config = {
-  apiKey: "AIzaSyCTJNSEAX4odrffbgGC_nobsPOPZMd7qgc",
-  authDomain: "vue-chat-77b39.firebaseapp.com",
-  databaseURL: "https://vue-chat-77b39.firebaseio.com",
-  storageBucket: "vue-chat-77b39.appspot.com",
-  messagingSenderId: "545307205041"
-}
-firebase.initializeApp(config);
-
-const database = firebase.database();
+const database = Firebase.database();
 const chats = database.ref('chats');
 const users = database.ref('users');
 // for image store
-const storageRef = firebase.storage().ref();
+const storageRef = Firebase.storage().ref();
 
 // scroll to bottom
 chats.on('child_added', data => {
@@ -63,6 +51,8 @@ chats.on('child_added', data => {
     document.querySelector('.chat-list').scrollTop = document.querySelector('.chat-list').scrollHeight;
   });
 });
+
+const XSSfilter = content => content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 export default {
   name: 'chatpage',
@@ -95,7 +85,7 @@ export default {
       if(data != ''){
         chats.push({
           user: this.currentUser.uid,
-          content: data,
+          content: XSSfilter(data),
           time: new Date().toString()
         });
         this.newChat = '';
@@ -185,7 +175,7 @@ header > button:hover {
 }
 .content {
   display: inline-block;
-  padding: 0.6rem 1rem 0.85rem 1rem;
+  padding: 0.6rem 1rem;
   background-color: white;    
   border-radius: 3px;
   color: black;
@@ -198,8 +188,8 @@ header > button:hover {
   color: white;
 }
 .content > img {
-  max-width: 50vw;
-  max-height: 50vh;
+  max-width: 40vw;
+  max-height: 40vh;
 }
 .type-chat {
   position: absolute;

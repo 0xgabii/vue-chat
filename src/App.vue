@@ -11,11 +11,13 @@
 </template>
 
 <script>
+import Firebase from './firebaseHelper'
 import LandingPage from './components/LandingPage'
 import ChatPage from './components/ChatPage'
 
-const database = firebase.database();
-const provider = new firebase.auth.GoogleAuthProvider();
+// set Firebase
+const database = Firebase.database();
+const provider = new Firebase.auth.GoogleAuthProvider();
 
 export default {
   name: 'app',
@@ -26,7 +28,7 @@ export default {
     }
   },  
   created() {
-    firebase.auth().onAuthStateChanged(user => {
+    Firebase.auth().onAuthStateChanged(user => {
       if(user) {
         const currentUser = {
           uid: user.uid,
@@ -44,13 +46,13 @@ export default {
   },
   methods: {
     login() {
-      firebase.auth().signInWithRedirect(provider);        
+      Firebase.auth().signInWithRedirect(provider);        
     },
     logout() {
-      firebase.auth().signOut().then(() => {
-        this.auth = false;
-      }, error => {console.log(error)});
-    },    
+      this.auth = false;
+      database.ref('users/' + this.currentUser.uid).remove();
+      Firebase.auth().signOut().then(() => {}, errror => {console.log(error)});
+    },
   },
   components: {
     ChatPage,

@@ -7,9 +7,10 @@
       <button @click="auth">logout</button>
     </header>
 
-    <div class="chat-list">
+    <transition-group tag="div" class="chat-list" name="chat-list">        
       <div class="chat" 
-        v-for="item in chatList">
+        v-for="item in chatList"
+        :key="item.user">
         <div class="info">
           <img class="info-thumbnail" :src="userList[_.findIndex(userList, {uid: item.user})].profile_picture" alt="profile">       
           <div class="info-text">
@@ -19,7 +20,7 @@
         </div>
         <div class="content" v-html="item.content"></div>        
       </div>
-    </div>
+    </transition-group>
 
     <div class="type-chat">      
       <input 
@@ -109,23 +110,22 @@ export default {
         this.newChat = '';
       }
     },
-    sendImage(e){
-      const file = e.target.files[0];
-      const fileName = file.name;
-      const fileType = file.type;
+    sendImage(obj){
+      if(obj.type == 'file'){
+        const file = obj.data;
+        const filename = file.name;
 
-      if(fileType != 'image/jpeg' && fileType != 'image/gif' && fileType != 'image/png'){
-        alert('photo only!');
-        e.target.value = '';
-        return;
-      }
-      storageRef.child('images/' + fileName).put(file).then(snapshot => {
-        chats.push({
-          user: this.currentUser.uid,
-          content: `<img src="${snapshot.downloadURL}" />`,
-          time: new Date().toString()
-        });
-      });
+        storageRef.child('images/' + filename).put(file).then(snapshot => {
+          chats.push({
+            user: this.currentUser.uid,
+            content: `<img src="${snapshot.downloadURL}" />`,
+            time: new Date().toString()
+          });
+        });        
+      } else{
+        // img url..
+      }      
+      this.modalClose();
     },
     modalClose() {
       Object.keys(this.modals).forEach(key => { this.modals[key] = false });
@@ -139,9 +139,17 @@ export default {
 
 <style>
 /* transition css */
+.chat-list-enter-active {
+  transition: all 0.75s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+.chat-list-enter {
+  transform: translateX(-3rem);
+  opacity: 0;
+}
+
 .modal-enter-active,
 .modal-leave-active{
-  transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28)
+  transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 .modal-enter {
   transform: scale(0.7) translate(20rem, 20rem);
@@ -221,7 +229,7 @@ header > button:hover {
   color: black;
   font-weight: 300;
   box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
-  animation: bubble 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  
 }
 .content.me {
   background-color: #673ab7;

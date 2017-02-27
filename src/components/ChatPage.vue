@@ -3,6 +3,7 @@
     <header :style="{backgroundColor: mainColor}">
       <span>{{online}}</span>
       <span>{{headerMsg}}</span>
+      <input type="color" v-model="mainColor">
       <button @click="auth">logout</button>
     </header>
 
@@ -32,11 +33,13 @@
       </div>             
     </div> 
 
-    <photo-upload 
-      v-if="modals.photoUpload"
-      :color="mainColor"      
-      :sendImage="sendImage" 
-      :modalClose="modalClose" />
+    <transition name="modal">
+      <photo-upload 
+        v-if="modals.photoUpload"
+        :color="mainColor"      
+        :sendImage="sendImage" 
+        :modalClose="modalClose" />
+    </transition>    
   </div>
 </template>
 
@@ -55,9 +58,14 @@ const storageRef = Firebase.storage().ref();
 // scroll to bottom
 chats.on('child_added', data => {
   setTimeout(() => {
-    document.querySelector('.chat-list').scrollTop = document.querySelector('.chat-list').scrollHeight;
+    scrollBottom();
   });
 });
+
+const scrollBottom = () => {
+  const chatlist = document.querySelector('.chat-list');
+  chatlist.scrollTop = chatlist.scrollHeight;
+};
 
 const XSSfilter = content => content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -130,6 +138,21 @@ export default {
 </script>
 
 <style>
+/* transition css */
+.modal-enter-active,
+.modal-leave-active{
+  transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28)
+}
+.modal-enter {
+  transform: scale(0.7) translate(20rem, 20rem);
+  opacity: 0;
+}
+.modal-leave-to {
+  transform: scale(0.7) translate(20rem, 20rem);
+  opacity: 0;
+}
+
+/* template css */
 .chat-page {
   width: 100vw;
   height: 100vh;
@@ -283,8 +306,7 @@ input[type="file"] {
   top: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0,0,0,0.5);
-}    
+}   
 .modal-wrapper {
   position: absolute;
   left: 50%;

@@ -6,31 +6,15 @@
     <chat-page 
       v-if="auth"
       :auth="logout"
-      :userList="userList"
-      :chatList="chatList"
-      :sendChat="sendChat" />
+      :currentUser="currentUser" />
   </div>
 </template>
 
 <script>
-import * as firebase from 'firebase';
-
 import LandingPage from './components/LandingPage'
 import ChatPage from './components/ChatPage'
 
-// set Firebase
-const config = {
-  apiKey: "AIzaSyCTJNSEAX4odrffbgGC_nobsPOPZMd7qgc",
-  authDomain: "vue-chat-77b39.firebaseapp.com",
-  databaseURL: "https://vue-chat-77b39.firebaseio.com",
-  storageBucket: "vue-chat-77b39.appspot.com",
-  messagingSenderId: "545307205041"
-}
-firebase.initializeApp(config);
-
 const database = firebase.database();
-const chats = database.ref('chats');
-const users = database.ref('users');
 const provider = new firebase.auth.GoogleAuthProvider();
 
 export default {
@@ -40,11 +24,7 @@ export default {
       auth: true,
       currentUser: {}
     }
-  },
-  firebase: {
-    chatList: chats,
-    userList: users,
-  },
+  },  
   created() {
     firebase.auth().onAuthStateChanged(user => {
       if(user) {
@@ -70,14 +50,7 @@ export default {
       firebase.auth().signOut().then(() => {
         this.auth = false;
       }, error => {console.log(error)});
-    },
-    sendChat(data) {
-      chats.push({
-        user: this.currentUser.uid,
-        content: data,
-        time: new Date().toString()
-      });
-    }
+    },    
   },
   components: {
     ChatPage,
@@ -97,6 +70,6 @@ export default {
 }
 body {
   font-family: 'Roboto', sans-serif;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 </style>

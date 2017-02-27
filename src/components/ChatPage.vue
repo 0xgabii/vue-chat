@@ -160,15 +160,15 @@ export default {
 
 .modal-enter-active,
 .modal-leave-active{
-  transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  transition: all 0.75s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
-.modal-enter {
-  transform: scale(0.7) translate(20rem, 20rem);
-  opacity: 0;
-}
+.modal-enter,
 .modal-leave-to {
-  transform: scale(0.7) translate(20rem, 20rem);
   opacity: 0;
+}
+.modal-enter .modal-wrapper,
+.modal-leave-to .modal-wrapper{
+  transform: translate(-50%, -50%) scale(1.2);
 }
 
 /* template css */
@@ -245,10 +245,15 @@ header > button:hover {
   box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
   
 }
-
 .content > img {
   max-width: 40vw;
   max-height: 40vh;
+  padding: 0.3rem 0;
+  border-radius: 3px;
+}
+.myChat .content {
+  background-color: #5775f6;
+  color: white;
 }
 .type-chat {
   position: absolute;
@@ -325,6 +330,7 @@ input[type="file"] {
   top: 0;
   width: 100vw;
   height: 100vh;
+  background-color: rgba(0,0,0,0.3);
 }   
 .modal-wrapper {
   position: absolute;
@@ -336,6 +342,7 @@ input[type="file"] {
   border-radius: 3px;
   transform: translate(-50%,-50%);
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  transition: all 0.3s;
 }
 .modal-header {  
   position: relative;

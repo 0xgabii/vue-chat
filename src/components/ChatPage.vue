@@ -5,8 +5,7 @@
       <span>{{headerMsg}}</span>
       <button @click="auth">logout</button>
     </header>
-    <!-- <button @click="auth">logout</button> -->
-    
+
     <div class="chat-list">
       <div class="chat" 
         v-for="item in chatList">
@@ -17,7 +16,7 @@
             <span class="time">{{new Date(item.time).getHours() + ':' + new Date(item.time).getMinutes()}}</span>
           </div> 
         </div>
-        <div class="content">{{item.content}}</div>        
+        <div class="content" v-html="item.content"></div>        
       </div>
     </div>
 
@@ -27,7 +26,7 @@
         v-model="newChat" 
         @keyup.enter="sendChat(newChat)"
         placeholder="Say something...">     
-      <input type="file" id="file">
+      <input type="file" id="file" @change="sendImage">
       <div class="btn-group">
         <label class="labelBtn" for="file" :style="{color: mainColor}">add photo</label>
         <button class="btn" @click="sendChat(newChat)" :style="{backgroundColor: mainColor}">SEND</button>    
@@ -55,6 +54,8 @@ firebase.initializeApp(config);
 const database = firebase.database();
 const chats = database.ref('chats');
 const users = database.ref('users');
+// for image store
+const storageRef = firebase.storage().ref();
 
 // scroll to bottom
 chats.on('child_added', data => {
@@ -99,12 +100,30 @@ export default {
         });
         this.newChat = '';
       }
+    },
+    sendImage(e){
+      const file = e.target.files[0];
+      const fileName = file.name;
+      const fileType = file.type;
+
+      if(fileType != 'image/jpeg' && fileType != 'image/gif' && fileType != 'image/png'){
+        alert('photo only!');
+        e.target.value = '';
+        return;
+      }
+      storageRef.child('images/' + fileName).put(file).then(snapshot => {
+        chats.push({
+          user: this.currentUser.uid,
+          content: `<img src="${snapshot.downloadURL}" />`,
+          time: new Date().toString()
+        });
+      });
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
 .chat-page {
   width: 100vw;
   height: 100vh;
@@ -177,6 +196,10 @@ header > button:hover {
 .content.me {
   background-color: #673ab7;
   color: white;
+}
+.content > img {
+  max-width: 50vw;
+  max-height: 50vh;
 }
 .type-chat {
   position: absolute;

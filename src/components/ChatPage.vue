@@ -3,7 +3,7 @@
     <header :style="{backgroundColor: mainColor}">
       <span>{{online}}</span>
       <span>{{headerMsg}}</span>
-      <input type="color" v-model="mainColor">
+      <!-- <input type="color" v-model="mainColor"> -->
       <button @click="auth">logout</button>
     </header>
 

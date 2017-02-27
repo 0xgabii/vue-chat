@@ -25,19 +25,26 @@
         type="text" 
         v-model="newChat" 
         @keyup.enter="sendChat(newChat)"
-        placeholder="Say something...">     
-      <input type="file" id="file" @change="sendImage">
+        placeholder="Say something...">
       <div class="btn-group">
-        <label class="labelBtn" for="file" :style="{color: mainColor}">add photo</label>
-        <button class="btn" @click="sendChat(newChat)" :style="{backgroundColor: mainColor}">SEND</button>    
+        <button class="btn" @click="modals.photoUpload = true" :style="{color: mainColor}">add photo</button>
+        <button class="btn" @click="sendChat(newChat)" :style="{backgroundColor: mainColor}">Send</button>    
       </div>             
     </div> 
+
+    <photo-upload 
+      v-if="modals.photoUpload"
+      :color="mainColor"      
+      :sendImage="sendImage" 
+      :modalClose="modalClose" />
   </div>
 </template>
 
 <script>
-import Firebase from '../firebaseHelper'
 import _ from 'lodash'
+import Firebase from '../firebaseHelper'
+
+import PhotoUpload from './modal/PhotoUpload'
 
 const database = Firebase.database();
 const chats = database.ref('chats');
@@ -64,7 +71,10 @@ export default {
     return {
       mainColor: '#673ab7',
       headerMsg: 'Vue-Chat',
-      newChat: ''
+      newChat: '',
+      modals: {
+        photoUpload: false,
+      }      
     }
   },
   firebase: {
@@ -108,7 +118,13 @@ export default {
           time: new Date().toString()
         });
       });
+    },
+    modalClose() {
+      Object.keys(this.modals).forEach(key => { this.modals[key] = false });
     }
+  },
+  components: {
+    PhotoUpload
   }
 }
 </script>
@@ -119,6 +135,7 @@ export default {
   height: 100vh;
   overflow: hidden;
   background-color: #f2f2f2;
+  color: #2f2f2f;
 }
 header {
   display: flex;
@@ -199,7 +216,7 @@ header > button:hover {
   background-color: white;
   box-shadow: 0 -5px 10px -5px rgba(0,0,0,.2);
 }
-input[type="text"] {
+.type-chat > input[type="text"] {
   position: absolute;
   left: 2rem;
   top: 50%;
@@ -212,6 +229,7 @@ input[type="text"] {
   transform: translateY(-50%);
 }
 input[type="file"] {
+  position: absolute;
   width: 0;
   height: 0;
   overflow: hidden;
@@ -225,8 +243,7 @@ input[type="file"] {
   height: 3rem;
   transform: translateY(-55%);
 }
-.btn,
-.labelBtn {
+.btn {
   display: inline-block;
   padding: 1rem 1.5rem;
   margin: 0 0.2rem;
@@ -234,19 +251,17 @@ input[type="file"] {
   border: none; 
   border-radius: 3px;
   outline: none;
+  color: white;
   font-size: 1rem;
   transition: all 0.3s;
 }
-.btn {
-  vertical-align: bottom;
-  color: white;
-}
-.btn:hover{
-  border-radius: 3rem;
-}
-.labelBtn:hover {
+.btn:nth-of-type(1):hover{
   background-color: rgba(0,0,0, 0.1);
 }
+.btn:nth-of-type(2):hover{
+  border-radius: 3rem;
+}
+
 @keyframes bubble{
   0%{
     opacity: 0;
@@ -259,6 +274,66 @@ input[type="file"] {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/* modal style */
+.modal {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+}    
+.modal-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  min-width: 25rem;
+  padding: 1.2rem;
+  background-color: white;
+  border-radius: 3px;
+  transform: translate(-50%,-50%);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+.modal-header {  
+  position: relative;
+  padding: 0 0.5rem 1rem 0.5rem;
+  border-bottom: 1px solid lightgray;
+  font-size: 1.35rem;
+}
+.close {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  color: gray;
+  cursor: pointer;
+  transform: translateY(-70%);
+}
+
+.modal-content {
+  padding: 1rem;
+}
+.modal-footer {
+  padding: 1rem 0 0 0;
+  border-top: 1px solid lightgray;
+  text-align: right;
+}
+.modal-footer > button {
+  padding: 0.65rem 1.2rem;
+  background-color: transparent;  
+  border: none;
+  border-radius: 3px;  
+  outline: none;
+  font-size: 1rem;
+  color: white;
+  transition: all 0.3s;
+}
+.modal-footer > button:nth-of-type(1):hover {
+  background-color: rgba(0,0,0,0.1);
+}
+.modal-footer > button:nth-of-type(2):hover {
+  border-radius: 3rem;
 }
 
 </style>

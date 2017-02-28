@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" :class="{active: modalActive}">
+  <div class="modal">
     <div class="modal-wrapper">
       <div class="modal-header">
         <h3>Add Photo</h3>        
@@ -49,7 +49,6 @@
 export default {
   name: 'photoupload',
   props: [
-    'modalActive',
     'modalClose',
     'sendImage',
     'color',

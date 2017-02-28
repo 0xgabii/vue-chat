@@ -11,16 +11,16 @@
       <div class="chat" 
         v-for="item in chatList"
         :key="item.user"
-        :class="{myChat: item.user == currentUser.uid}">
+        :class="{myChat: item.user == myAcount.uid}">
         <div class="info">
           <img 
             class="info-thumbnail" 
-            v-if="item.user != currentUser.uid"
+            v-if="item.user != myAcount.uid"
             :src="userList[_.findIndex(userList, {uid: item.user})].picture">       
           <div class="info-text">
             <span 
               class="username"
-              v-if="item.user != currentUser.uid">
+              v-if="item.user != myAcount.uid">
               {{userList[_.findIndex(userList, {uid: item.user})].username}}
             </span>
             <span class="time">
@@ -28,7 +28,7 @@
             </span>
           </div> 
         </div>
-        <div class="content" v-html="item.content"></div>        
+        <div class="content" v-html="item.content" @click="contentClick"></div>        
       </div>
     </transition-group>
 
@@ -39,18 +39,24 @@
         @keyup.enter="sendChat(newChat)"
         placeholder="Say something...">
       <div class="btn-group">
-        <button class="btn" @click="modals.photoUpload = true" :style="{color: mainColor}">add photo</button>
+        <button class="btn" @click="modals.photoUpload.visible = true" :style="{color: mainColor}">add photo</button>
         <button class="btn" @click="sendChat(newChat)" :style="{backgroundColor: mainColor}">Send</button>    
       </div>             
     </div> 
 
     <transition name="modal">
       <photo-upload 
-        v-if="modals.photoUpload"
+        v-if="modals.photoUpload.visible"
         :color="mainColor"      
         :sendImage="sendImage" 
         :modalClose="modalClose" />
-    </transition>    
+    </transition> 
+
+    <view-original 
+      v-if="modals.viewOriginal.visible"
+      :img="modals.viewOriginal.img"
+      :modalClose="modalClose" />
+
   </div>
 </template>
 
@@ -59,6 +65,7 @@ import _ from 'lodash'
 import Firebase from '../firebaseHelper'
 
 import PhotoUpload from './modal/PhotoUpload'
+import ViewOriginal from './modal/ViewOriginal'
 
 const database = Firebase.database();
 const chats = database.ref('chats');
@@ -86,7 +93,7 @@ export default {
   name: 'chatpage',
   props: [
     'auth',
-    'currentUser'
+    'myAcount'
   ],
   data() {
     return {
@@ -94,8 +101,14 @@ export default {
       headerMsg: 'Vue-Chat',
       newChat: '',
       modals: {
-        photoUpload: false,
-      }      
+        photoUpload: {
+          visible: false
+        },
+        viewOriginal: {
+          visible: false,
+          img: ''
+        }
+      }
     }
   },
   firebase: {
@@ -133,17 +146,25 @@ export default {
     },
     pushChat(content) {
       chats.push({
-        user: this.currentUser.uid,
+        user: this.myAcount.uid,
         content: content,
         time: new Date().toString()
       });
     },    
     modalClose() {
-      Object.keys(this.modals).forEach(key => { this.modals[key] = false });
+      Object.keys(this.modals).forEach(key => { this.modals[key].visible = false });
+    },
+    contentClick(e) {
+      // when image Click
+      if(e.target.childNodes[0].localName == 'img'){
+        this.modals.viewOriginal.img = e.target.childNodes[0].src;
+        this.modals.viewOriginal.visible = true;
+      }
     }
   },
   components: {
-    PhotoUpload
+    PhotoUpload,
+    ViewOriginal
   }
 }
 </script>
@@ -242,14 +263,15 @@ header > button:hover {
   border-radius: 3px;
   color: black;
   font-weight: 300;
+  cursor: pointer;
   box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
-  
 }
 .content > img {
   max-width: 40vw;
   max-height: 40vh;
   padding: 0.3rem 0;
   border-radius: 3px;
+  pointer-events: none;
 }
 .myChat .content {
   background-color: #5775f6;

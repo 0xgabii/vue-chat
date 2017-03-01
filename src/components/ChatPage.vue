@@ -1,13 +1,16 @@
 <template>
   <div class="chat-page">
     <header :style="{backgroundColor: mainColor}">
-      <span>{{online}}</span>
+      <button><i class="material-icons">menu</i></button>
       <span>{{headerMsg}}</span>
       <!-- <input type="color" v-model="mainColor"> -->
-      <button @click="auth">logout</button>
+      <button @click="auth">Logout</button>
     </header>
 
-    <online-users :data="onlineList" />
+    <div class="online-list-btn" @click="modals.onlineUsers.visible = !modals.onlineUsers.visible">
+       <i class="material-icons">person</i>
+       <span>{{online}}</span>
+    </div>    
 
     <transition-group tag="div" class="chat-list" name="chat-list">        
       <div class="chat" 
@@ -52,6 +55,11 @@
         :color="mainColor"      
         :sendImage="sendImage" 
         :modalClose="modalClose" />
+      <online-users 
+        v-if="modals.onlineUsers.visible"
+        :color="mainColor"
+        :data="onlineList"
+        :modalClose="modalClose" />
     </transition> 
 
     <view-original 
@@ -68,7 +76,7 @@ import Firebase from '../firebaseHelper'
 
 import PhotoUpload from './modal/PhotoUpload'
 import ViewOriginal from './modal/ViewOriginal'
-import OnlineUsers from './OnlineUsers'
+import OnlineUsers from './modal/OnlineUsers'
 
 const database = Firebase.database();
 const chats = database.ref('chats');
@@ -102,6 +110,7 @@ export default {
     return {
       mainColor: '#673ab7',
       headerMsg: 'Vue-Chat',
+      showOnline: false,
       newChat: '',
       modals: {
         photoUpload: {
@@ -110,6 +119,9 @@ export default {
         viewOriginal: {
           visible: false,
           img: ''
+        },
+        onlineUsers: {
+          visible: false,
         }
       }
     }
@@ -125,7 +137,7 @@ export default {
       return _;
     },
     online() {
-      return 'online: ' + this.onlineList.length;
+      return this.onlineList.length;
     },
   },
   methods: {
@@ -175,6 +187,15 @@ export default {
 
 <style>
 /* transition css */
+.online-list-enter-active,
+.online-list-leave-active {
+  transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+.online-list-enter,
+.online-list-leave-to {
+  transform: translateX(-25vw);
+}
+
 .chat-list-enter-active {
   transition: all 0.75s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
@@ -336,20 +357,24 @@ input[type="file"] {
   border-radius: 3rem;
 }
 
-@keyframes bubble{
-  0%{
-    opacity: 0;
-    transform: scale(0);
-  }
-  50%{
-    transform: scale(1.2);
-  }
-  100%{
-    opacity: 1;
-    transform: scale(1);
-  }
+.online-list-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  left: 50%;
+  top: 3.5rem;  
+  padding: 0.2rem 0.4rem;    
+  z-index: 1;
+  background-color: rgba(0,0,0,0.7);
+  color: white;  
+  cursor: pointer;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
+  transform: translateX(-50%);
 }
-
+.online-list-btn > span {
+  padding: 0 0.2rem;
+}
 /* modal style */
 .modal {
   position: absolute;

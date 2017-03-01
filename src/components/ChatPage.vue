@@ -7,6 +7,8 @@
       <button @click="auth">logout</button>
     </header>
 
+    <online-users :data="onlineList" />
+
     <transition-group tag="div" class="chat-list" name="chat-list">        
       <div class="chat" 
         v-for="item in chatList"
@@ -66,6 +68,7 @@ import Firebase from '../firebaseHelper'
 
 import PhotoUpload from './modal/PhotoUpload'
 import ViewOriginal from './modal/ViewOriginal'
+import OnlineUsers from './OnlineUsers'
 
 const database = Firebase.database();
 const chats = database.ref('chats');
@@ -164,7 +167,8 @@ export default {
   },
   components: {
     PhotoUpload,
-    ViewOriginal
+    ViewOriginal,
+    OnlineUsers,
   }
 }
 </script>

@@ -46,6 +46,10 @@
 </template>
 
 <script>
+import siiimpleToast from 'siiimple-toast';
+
+const toast = new siiimpleToast();
+
 export default {
   name: 'photoupload',
   props: [
@@ -77,25 +81,22 @@ export default {
     }
   },
   methods: {
-    selectFile() {
-      this.visible.box = false;
-      this.visible.file = true;
+    selectFile() {      
       document.getElementById('file').click();
     },
     selectUrl() {
       this.visible.box = false;
       this.visible.url = true;
     },
-    filechange(e) {
+    filechange(e) {      
       const file = e.target.files[0];
       // in IE, can't recognition file.type 
       const fileType = file.name.split('.').pop();      
 
       if(fileType != 'png' && fileType != 'gif' 
           && fileType != 'jpg' && fileType != 'jpeg'){
-        e.target.value = '';
-        this.visible.box= true;
-        this.visible.file= false;
+        toast.alert('Only photos can be uploaded');
+        e.target.value = '';        
         return;
       }
 
@@ -104,10 +105,12 @@ export default {
         type: 'file',
         data: file
       }
+      this.visible.box = false;
+      this.visible.file = true;
 
       e.target.value = '';     
     },
-    photoUpload() {      
+    photoUpload() {
       if(this.photo.data == '' || this.photo.type == '') return;
       this.sendImage(this.photo);
     }

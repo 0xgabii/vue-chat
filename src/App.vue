@@ -6,7 +6,7 @@
     <chat-page 
       v-if="auth"
       :auth="logout"
-      :myAcount="myAcount" />
+      :myAccount="myAccount" />
   </div>
 </template>
 
@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       auth: true,
-      myAcount: {}
+      myAccount: {}
     }
   },
   created() {
@@ -35,7 +35,7 @@ export default {
           username: user.displayName,
           picture : user.photoURL,
         }
-        this.myAcount = userObj;
+        this.myAccount = userObj;
         database.ref('users/' + user.uid).set(userObj);
         database.ref('online/' + user.uid).set(userObj);
 
@@ -51,7 +51,7 @@ export default {
     },
     logout() {
       this.auth = false;
-      database.ref('online/' + this.myAcount.uid).remove();
+      database.ref('online/' + this.myAccount.uid).remove();
       Firebase.auth().signOut().then(() => {}, errror => {console.log(error)});
     },
   },

@@ -16,16 +16,16 @@
       <div class="chat" 
         v-for="item in chatList"
         :key="item.user"
-        :class="{myChat: item.user == myAcount.uid}">
+        :class="{myChat: item.user == myAccount.uid}">
         <div class="info">
           <img 
             class="info-thumbnail" 
-            v-if="item.user != myAcount.uid"
+            v-if="item.user != myAccount.uid"
             :src="userList[_.findIndex(userList, {uid: item.user})].picture">       
           <div class="info-text">
             <span 
               class="username"
-              v-if="item.user != myAcount.uid">
+              v-if="item.user != myAccount.uid">
               {{userList[_.findIndex(userList, {uid: item.user})].username}}
             </span>
             <span class="time">
@@ -104,7 +104,7 @@ export default {
   name: 'chatpage',
   props: [
     'auth',
-    'myAcount'
+    'myAccount'
   ],
   data() {
     return {
@@ -161,7 +161,7 @@ export default {
     },
     pushChat(content) {
       chats.push({
-        user: this.myAcount.uid,
+        user: this.myAccount.uid,
         content: content,
         time: new Date().toString()
       });

@@ -18,7 +18,7 @@ export default {
 
 <style scoped>
 .view-enter-active,
-.view-leave-to-active{
+.view-leave-active{
   transition: all 0.5s ease;
 }
 
@@ -38,6 +38,7 @@ export default {
   top: 0;
   right: 0;
   bottom: 0;
+  z-index: 10;
   background-color: rgba(0,0,0,0.75);
 }
 img{

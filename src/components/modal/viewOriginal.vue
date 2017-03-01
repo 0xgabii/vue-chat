@@ -19,7 +19,7 @@ export default {
 <style scoped>
 .view-enter-active,
 .view-leave-to-active{
-  transition: all 0.3s ease;
+  transition: all 0.5s ease;
 }
 
 .view-enter,

@@ -12,7 +12,7 @@
       v-if="colorPicker.visible"
       :data="colorPicker.data"
       :selectColor="changeMainColor"
-      :close="colorPickerClose" />        
+      :close="() => { colorPicker.visible = false}" />        
 
     <div class="online-list-btn" @click="modals.onlineUsers.visible = true">
        <i class="material-icons">person</i>
@@ -40,13 +40,13 @@
 
         <span class="time" 
           v-if="item.user == myAccount.uid"
-          v-text="new Date(item.time).getHours() + ':' + new Date(item.time).getMinutes()" />
+          v-text="new Date(item.time).toLocaleString()" />
 
         <div class="content" v-html="item.content" @click="contentClick"></div>
 
         <span class="time" 
           v-if="item.user != myAccount.uid"
-          v-text="new Date(item.time).getHours() + ':' + new Date(item.time).getMinutes()" />
+          v-text="new Date(item.time).toLocaleString()" />
 
       </div>
     </transition-group>
@@ -225,9 +225,6 @@ export default {
     },    
     modalClose() {
       Object.keys(this.modals).forEach(key => { this.modals[key].visible = false });
-    },
-    colorPickerClose() {      
-      this.colorPicker.visible = false;      
     },
     changeMainColor(item) {      
       this.colorPicker.data.forEach(data => {

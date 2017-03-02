@@ -34,13 +34,20 @@
               class="username"
               v-if="item.user != myAccount.uid">
               {{userList[_.findIndex(userList, {uid: item.user})].username}}
-            </span>
-            <span class="time">
-              {{new Date(item.time).getHours() + ':' + new Date(item.time).getMinutes()}}
-            </span>
+            </span>            
           </div> 
         </div>
-        <div class="content" v-html="item.content" @click="contentClick"></div>        
+
+        <span class="time" 
+          v-if="item.user == myAccount.uid"
+          v-text="new Date(item.time).getHours() + ':' + new Date(item.time).getMinutes()" />
+
+        <div class="content" v-html="item.content" @click="contentClick"></div>
+
+        <span class="time" 
+          v-if="item.user != myAccount.uid"
+          v-text="new Date(item.time).getHours() + ':' + new Date(item.time).getMinutes()" />
+
       </div>
     </transition-group>
 
@@ -341,11 +348,18 @@ header > button:hover {
 .content {
   margin-left: 3.5rem;
 }
+.myChat .info-text,
+.myChat .content {
+  margin-left: 0.5rem;
+}
+
 .username {
 
 }
 .time {
-
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: gray;  
 }
 .content {
   display: inline-block;

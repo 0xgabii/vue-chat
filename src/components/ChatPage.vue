@@ -1,13 +1,20 @@
 <template>
   <div class="chat-page">
-    <header :style="{backgroundColor: mainColor}">
-      <button><i class="material-icons">menu</i></button>
-      <span>{{headerMsg}}</span>
-      <!-- <input type="color" v-model="mainColor"> -->
+    <header :style="{backgroundColor: mainColor}">      
+      <span @click="colorPicker.visible = true">
+        <i class="material-icons">color_lens</i>
+      </span>
+      <h3>Vue-Chat</h3>
       <button @click="auth">Logout</button>
     </header>
+    
+    <color-picker 
+      v-if="colorPicker.visible"
+      :data="colorPicker.data"
+      :selectColor="changeMainColor"
+      :close="colorPickerClose" />        
 
-    <div class="online-list-btn" @click="modals.onlineUsers.visible = !modals.onlineUsers.visible">
+    <div class="online-list-btn" @click="modals.onlineUsers.visible = true">
        <i class="material-icons">person</i>
        <span>{{online}}</span>
     </div>    
@@ -77,6 +84,7 @@ import Firebase from '../firebaseHelper'
 import PhotoUpload from './modal/PhotoUpload'
 import ViewOriginal from './modal/ViewOriginal'
 import OnlineUsers from './modal/OnlineUsers'
+import ColorPicker from './ColorPicker'
 
 const database = Firebase.database();
 const chats = database.ref('chats');
@@ -108,8 +116,47 @@ export default {
   ],
   data() {
     return {
-      mainColor: '#673ab7',
-      headerMsg: 'Vue-Chat',
+      colorPicker: {
+        visible: false,
+        data: [
+          {
+            value: '#673ab7',
+            selected: true,
+          },
+          {
+            value: '#ff9800',
+            selected: false,
+          },
+          {
+            value: '#03a9f4',
+            selected: false,
+          },
+          {
+            value: '#cddc39',
+            selected: false,
+          },
+          {
+            value: '#009688',
+            selected: false,
+          },
+          {
+            value: '#e91e63',
+            selected: false,
+          },
+          {
+            value: '#607d8b',
+            selected: false,
+          },
+          {
+            value: '#795548',
+            selected: false,
+          },
+          {
+            value: '#ff5722',
+            selected: false,
+          }
+        ]
+      },
       showOnline: false,
       newChat: '',
       modals: {
@@ -139,6 +186,9 @@ export default {
     online() {
       return this.onlineList.length;
     },
+    mainColor() {
+      return this.colorPicker.data.filter(data => data.selected == true)[0].value;
+    }
   },
   methods: {
     sendChat(data) {
@@ -169,6 +219,14 @@ export default {
     modalClose() {
       Object.keys(this.modals).forEach(key => { this.modals[key].visible = false });
     },
+    colorPickerClose() {      
+      this.colorPicker.visible = false;      
+    },
+    changeMainColor(item) {      
+      this.colorPicker.data.forEach(data => {
+        data.selected = (data == item ? true : false);
+      });
+    },
     contentClick(e) {
       // when image Click
       if(e.target.childNodes[0].localName == 'img'){
@@ -181,21 +239,13 @@ export default {
     PhotoUpload,
     ViewOriginal,
     OnlineUsers,
+    ColorPicker,
   }
 }
 </script>
 
 <style>
 /* transition css */
-.online-list-enter-active,
-.online-list-leave-active {
-  transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-}
-.online-list-enter,
-.online-list-leave-to {
-  transform: translateX(-25vw);
-}
-
 .chat-list-enter-active {
   transition: all 0.75s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
@@ -227,16 +277,31 @@ export default {
   color: #2f2f2f;
 }
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  position: relative;
   padding: 0 2rem;
   height: 3.5rem;
   color: white;
   box-shadow: 0 5px 10px -5px rgba(0,0,0,.8);
   transition: all 0.3s;
 }
+header > h3 { 
+  position: absolute;      
+  left: 50%;    
+  top: 50%;  
+  transform: translate(-50%, -50%);  
+}
+header > span > i {
+  position: absolute;        
+  left: 1.5rem; 
+  top: 50%;  
+  cursor: pointer;
+  transform: translateY(-50%); 
+}
 header > button {
+  position: absolute;      
+  right: 1.5rem;    
+  top: 50%;  
+  transform: translateY(-50%); 
   padding: 0.5rem 1.2rem;
   background-color: transparent;
   border: 2px solid white;

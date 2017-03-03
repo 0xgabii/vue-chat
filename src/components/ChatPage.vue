@@ -119,7 +119,6 @@ export default {
   name: 'chatpage',
   props: [
     'auth',
-    'myAccount'
   ],
   data() {
     return {
@@ -189,6 +188,9 @@ export default {
     // lodash
     _() {
       return _;
+    },
+    myAccount() {
+      return this.$store.state.myAccount;
     },
     online() {
       return this.onlineList.length;

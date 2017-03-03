@@ -5,8 +5,7 @@
       :auth="login" />
     <chat-page 
       v-if="auth"
-      :auth="logout"
-      :myAccount="myAccount" />
+      :auth="logout" />
   </div>
 </template>
 
@@ -24,7 +23,6 @@ export default {
   data() {
     return {
       auth: true,
-      myAccount: {}
     }
   },
   created() {
@@ -35,7 +33,7 @@ export default {
           username: user.displayName,
           picture : user.photoURL,
         }
-        this.myAccount = userObj;
+        this.$store.dispatch('setMyAccount', userObj); 
         database.ref('users/' + user.uid).set(userObj);
         database.ref('online/' + user.uid).set(userObj);
 

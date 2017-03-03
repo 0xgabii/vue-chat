@@ -20,11 +20,6 @@ const provider = new Firebase.auth.GoogleAuthProvider();
 
 export default {
   name: 'app',
-  data() {
-    return {
-      auth: true,
-    }
-  },
   created() {
     Firebase.auth().onAuthStateChanged(user => {
       if(user) {
@@ -32,25 +27,33 @@ export default {
           uid: user.uid,
           username: user.displayName,
           picture : user.photoURL,
-        }
-        this.$store.dispatch('setMyAccount', userObj); 
+        }        
         database.ref('users/' + user.uid).set(userObj);
         database.ref('online/' + user.uid).set(userObj);
 
-        this.auth = true;
+        this.$store.dispatch('setMyAccount', userObj); 
+        this.$store.dispatch('setAuth', true);
       } else{
-        this.auth = false;
+        this.$store.dispatch('setAuth', false);
       }
     }); 
+  },
+  computed: {
+    auth() {
+      return this.$store.state.auth;
+    },
+    myAccount() {
+      return this.$store.state.myAccount;
+    }
   },
   methods: {
     login() {
       Firebase.auth().signInWithRedirect(provider);        
     },
     logout() {
-      this.auth = false;
+      this.$store.dispatch('setAuth', false);
       database.ref('online/' + this.myAccount.uid).remove();
-      Firebase.auth().signOut().then(() => {}, errror => {console.log(error)});
+      Firebase.auth().signOut();
     },
   },
   components: {

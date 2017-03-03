@@ -206,7 +206,7 @@ export default {
   methods: {
     sendChat(data) {
       if(data != ''){
-        this.pushChat(XSSfilter(data));
+        this.pushChat(`<div>${XSSfilter(data)}</div>`);
         this.newChat = '';
       }
     },
@@ -328,7 +328,7 @@ header > button:hover {
   overflow-y: auto;  
   padding: 0.5rem 1rem;
 }
-.chat {
+.chat {  
   padding: 0.5rem;
 }
 .chat.myChat {
@@ -366,6 +366,8 @@ header > button:hover {
 }
 .content {
   display: inline-block;
+}
+.content > div {  
   padding: 0.6rem 1rem;
   background-color: white;    
   border-radius: 3px;
@@ -377,11 +379,11 @@ header > button:hover {
 .content > img {
   max-width: 40vw;
   max-height: 40vh;
-  padding: 0.3rem 0;
   border-radius: 3px;
   pointer-events: none;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
 }
-.myChat .content {
+.myChat .content > div{
   background-color: #5775f6;
   color: white;
 }

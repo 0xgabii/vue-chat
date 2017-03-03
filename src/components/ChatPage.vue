@@ -85,6 +85,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import _ from 'lodash'
 import Firebase from '../firebaseHelper'
 
@@ -185,12 +186,15 @@ export default {
     onlineList: online,
   },
   computed: {
+    ...mapState([
+      'app'
+    ]),
     // lodash
     _() {
       return _;
     },
     myAccount() {
-      return this.$store.state.myAccount;
+      return this.app.myAccount;
     },
     online() {
       return this.onlineList.length;

@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 import Firebase from './firebaseHelper'
 import LandingPage from './components/LandingPage'
 import ChatPage from './components/ChatPage'
@@ -31,27 +32,34 @@ export default {
         database.ref('users/' + user.uid).set(userObj);
         database.ref('online/' + user.uid).set(userObj);
 
-        this.$store.dispatch('setMyAccount', userObj); 
-        this.$store.dispatch('setAuth', true);
+        this.setMyAccount(userObj); 
+        this.setAuth(true);
       } else{
-        this.$store.dispatch('setAuth', false);
+        this.setAuth(false);
       }
     }); 
   },
   computed: {
+    ...mapState([
+      'app'
+    ]),
     auth() {
-      return this.$store.state.auth;
+      return this.app.auth;
     },
     myAccount() {
-      return this.$store.state.myAccount;
-    }
+      return this.app.myAccount;
+    },
   },
   methods: {
+    ...mapActions([
+      'setMyAccount',
+      'setAuth',
+    ]),
     login() {
       Firebase.auth().signInWithRedirect(provider);        
     },
     logout() {
-      this.$store.dispatch('setAuth', false);
+      this.setAuth(false);
       database.ref('online/' + this.myAccount.uid).remove();
       Firebase.auth().signOut();
     },

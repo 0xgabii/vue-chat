@@ -1,5 +1,6 @@
 export default {
-  state: { 
+  namespaced: true,
+  state: {     
     visible: false,
     data: [
       {
@@ -44,21 +45,27 @@ export default {
     selectedColor: state => state.data.filter(item => item.selected == true)[0].value
   },
   mutations: {
+    OPEN(state) {
+      state.visible = true;
+    },
     CHANGE_COLOR_SELECTED(state, value) {
       state.data.forEach(item => {
         item.selected = (item == value ? true : false);
       });
     },
-    CLOSE_COLORPICKER(state) {
+    CLOSE(state) {
       state.visible = false;
     }
   },
   actions: {
+    open({ commit}) {
+      commit('OPEN');
+    },
     changeColor({ commit }, value) {
       commit('CHANGE_COLOR_SELECTED', value);
     },
     close({ commit }) {
-      commit('CLOSE_COLORPICKER');
+      commit('CLOSE');
     }
   }
 }

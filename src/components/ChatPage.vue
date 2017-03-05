@@ -1,7 +1,7 @@
 <template>
   <div class="chat-page">
     <header :style="{backgroundColor: mainColor}">      
-      <span @click="colorpicker.visible = true">
+      <span @click="openColorpicker">
         <i class="material-icons">color_lens</i>
       </span>
       <h3>Vue-Chat</h3>
@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import _ from 'lodash'
 import Firebase from '../firebaseHelper'
 
@@ -145,7 +145,7 @@ export default {
       'app',
       'colorpicker',
     ]),
-    ...mapGetters({
+    ...mapGetters('colorpicker', {
       mainColor: 'selectedColor'
     }),
     // lodash
@@ -160,6 +160,9 @@ export default {
     },
   },
   methods: {
+    ...mapActions('colorpicker', {
+      openColorpicker: 'open',
+    }),
     sendChat(data) {
       if(data != ''){
         this.pushChat(`<div>${XSSfilter(data)}</div>`);

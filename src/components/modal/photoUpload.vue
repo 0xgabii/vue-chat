@@ -22,7 +22,7 @@
           <span>photo url</span>
         </div>
 
-        <transition name="fade">
+        <transition name="url">
           <div class="url" v-if="visible.url">
             <input class="input" type="text" v-model="imgURL" placeholder="type url...">
           </div>
@@ -30,7 +30,7 @@
 
         <input type="file" id="file" @change="filechange">
         
-        <transition name="fade">
+        <transition name="thumbnail">
           <div class="thumbnail" v-if="visible.file">
             <img :src="dataURL">     
           </div>
@@ -119,25 +119,17 @@ export default {
 </script>
 
 <style scoped>
-/* transition css */
-.fade-enter-active,
-.fade-leave-active {
+.url-enter-active,
+.thumbnail-enter-active{
   transition: all 0.5s;
 }
-.fade-enter,
-.fade-leave-to {
+.url-enter,
+.url-leave-to,
+.thumbnail-enter,
+.thumbnail-leave-to{
   opacity: 0;
 }
 
-/* template css */
-input[type="file"] {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
 .modal-content{
   display: flex;
   justify-content: space-around;

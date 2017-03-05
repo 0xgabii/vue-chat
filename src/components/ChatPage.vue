@@ -208,6 +208,19 @@ export default {
   opacity: 0;
 }
 
+.modal-enter-active,
+.modal-leave-active{
+  transition: all 0.75s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+.modal-enter,
+.modal-leave-to {
+  opacity: 0;
+}
+.modal-enter .modal-wrapper,
+.modal-leave-to .modal-wrapper{
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
 /* template css */
 .chat-page {
   position: relative;

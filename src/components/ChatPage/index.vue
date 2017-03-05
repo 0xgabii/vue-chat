@@ -1,10 +1,14 @@
 <template>
   <div class="chat-page">
-    <header />    
-    <color-picker v-if="colorpicker.visible" />        
+    <chat-page-header />    
+    
+    <color-picker v-if="colorpicker.visible" />     
+
     <online-user-state :data="online" />
+
     <chat-list :data="chatList" />
-    <type-chat />    
+
+    <type-chat :sendChat="sendChat" />
 
     <transition name="modal">
       <photo-upload 
@@ -29,10 +33,9 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
-import _ from 'lodash'
-import Firebase from '../firebaseHelper'
+import Firebase from '../../firebaseHelper'
 
-import Header from './Header';
+import ChatPageHeader from './Header';
 import ColorPicker from './ColorPicker'
 import OnlineUserState from './OnlineUserState'
 import ChatList from './ChatList'
@@ -42,11 +45,11 @@ import PhotoUpload from '../modal/PhotoUpload'
 import ViewOriginal from '../modal/ViewOriginal'
 import OnlineUsers from '../modal/OnlineUsers'
 
+// firebase
 const database = Firebase.database();
 const chats = database.ref('chats');
 const users = database.ref('users');
 const online = database.ref('online');
-
 // for image store
 const storageRef = Firebase.storage().ref();
 
@@ -66,14 +69,6 @@ const XSSfilter = content => content.replace(/</g, "&lt;").replace(/>/g, "&gt;")
 
 export default {
   name: 'chatpage',
-  props: [
-    'auth',
-  ],
-  data() {
-    return {     
-      newChat: '',
-    }
-  },
   firebase: {
     chatList: chats,
     userList: users,
@@ -87,11 +82,7 @@ export default {
     ]),
     ...mapGetters('colorpicker', {
       mainColor: 'selectedColor'
-    }),
-    // lodash
-    _() {
-      return _;
-    },
+    }), 
     myAccount() {
       return this.app.myAccount;
     },
@@ -132,16 +123,14 @@ export default {
         content: content,
         time: new Date().toString()
       });
-    },
-    contentClick(e) {
-      // when img Click
-      if(e.target.childNodes[0].localName == 'img'){
-        this.viewOriginal(e.target.childNodes[0].src);
-        this.openModal('viewOriginal');
-      }
-    }
+    },    
   },
   components: {
+    ChatPageHeader,
+    ColorPicker,
+    OnlineUserState,
+    ChatList,
+    TypeChat,
     PhotoUpload,
     ViewOriginal,
     OnlineUsers,

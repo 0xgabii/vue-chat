@@ -1,5 +1,5 @@
 <template>
-  <transition-group tag="div" class="chat-list" name="chat-list">        
+  <transition-group tag="div" class="chat-list" name="chat">        
     <div class="chat" 
       v-for="item in data"
       :key="item.user"
@@ -33,25 +33,46 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import _ from 'lodash';
 
 export default {
   name: 'chatList',
   props: ['data'],
   computed: {
     ...mapState([
-      'myAccount',
+      'app',
     ]),
+    // lodash
+    _() {
+      return _;
+    },
+    myAccount() {
+      return this.app.myAccount;
+    }
   },
+  methods: {
+    ...mapActions('modals', {
+      openModal: 'open',
+      viewOriginal: 'viewOriginal'
+    }),
+    contentClick(e) {
+      // when img Click
+      if(e.target.childNodes[0].localName == 'img'){
+        this.viewOriginal(e.target.childNodes[0].src);
+        this.openModal('viewOriginal');
+      }
+    }
+  }
 }
 </script>
 
-<style scoped>
+<style>
 /* transition CSS */
-.chat-list-enter-active {
+.chat-enter-active {
   transition: all 0.75s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
-.chat-list-enter {
+.chat-enter {
   transform: translateX(-3rem);
   opacity: 0;
 }

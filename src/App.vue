@@ -3,16 +3,14 @@
     <landing-page 
       v-if="!auth"
       :auth="login" />
-    <chat-page 
-      v-if="auth"
-      :auth="logout" />
+    <chat-page v-if="auth" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
 import LandingPage from './components/LandingPage'
-import ChatPage from './components/ChatPage'
+import ChatPage from './components/ChatPage/index'
 
 require('./style/modal.css')
 

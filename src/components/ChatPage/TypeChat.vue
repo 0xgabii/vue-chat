@@ -3,21 +3,40 @@
     <input 
       type="text" 
       v-model="newChat" 
-      @keyup.enter="sendChat(newChat)"
+      @keyup.enter="beforeSendChat(newChat)"
       placeholder="Say something...">
     <div class="btn-group">
-      <button class="btn" @click="openModal('photoUpload')" :style="{color: mainColor}">add photo</button>
-      <button class="btn" @click="sendChat(newChat)" :style="{backgroundColor: mainColor}">Send</button>    
-    </div>    
+      <button @click="openModal('photoUpload')" :style="{color: mainColor}">add photo</button>
+      <button @click="beforeSendChat(newChat)" :style="{backgroundColor: mainColor}">Send</button>    
+    </div>
   </div> 
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'typeChat',
-  
+  props: ['sendChat'],
+  data() {
+    return {
+      newChat: '',
+    };
+  },
+  computed: {
+    ...mapGetters('colorpicker', {
+      mainColor: 'selectedColor'
+    }),
+  },
+  methods: {
+    ...mapActions('modals', {
+      openModal: 'open'
+    }),
+    beforeSendChat(value) {
+      this.sendChat(value);
+      this.newChat = '';
+    }
+  },
 }
 </script>
 
@@ -49,7 +68,7 @@ input[type="text"] {
   height: 3rem;
   transform: translateY(-55%);
 }
-.btn {
+button {
   display: inline-block;
   padding: 1rem 1.5rem;
   margin: 0 0.2rem;
@@ -61,10 +80,10 @@ input[type="text"] {
   font-size: 1rem;
   transition: all 0.3s;
 }
-.btn:nth-of-type(1):hover{
+button:nth-of-type(1):hover{
   background-color: rgba(0,0,0, 0.1);
 }
-.btn:nth-of-type(2):hover{
+button:nth-of-type(2):hover{
   border-radius: 3rem;
 }
 </style>

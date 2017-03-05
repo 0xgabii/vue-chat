@@ -1,5 +1,5 @@
 <template>
-  <div class="landing-page">
+  <div class="landing-page" :style="{backgroundColor: mainColor}">
     <div class="wrapper">
       <h1>{{landMsg}}</h1>
       <button @click="auth">{{landingBtnMsg}}</button>
@@ -8,16 +8,23 @@
 </template>
 
 <script>
-  export default {
-    name: 'landingPage',
-    props: ['auth'],
-    data() {
-      return {
-        landMsg: 'Vue-Chat with Goolge Firebase',
-        landingBtnMsg: 'Start Chat!'
-      }
+import { mapGetters } from 'vuex';
+
+export default {
+  name: 'landingPage',
+  props: ['auth'],
+  data() {
+    return {
+      landMsg: 'Vue-Chat with Goolge Firebase',
+      landingBtnMsg: 'Start Chat!'
     }
+  },
+  computed: {
+    ...mapGetters('colorpicker', {
+      mainColor: 'selectedColor'
+    }),
   }
+}
 </script>
 
 <style scoped>

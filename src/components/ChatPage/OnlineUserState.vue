@@ -1,5 +1,5 @@
 <template>
-  <div class="online-list-btn" @click="openModal('onlineUsers')">
+  <div class="online-user-state" @click="openModal('onlineUsers')">
       <i class="material-icons">person</i>
       <span>{{data}}</span>
   </div>  
@@ -12,7 +12,7 @@ export default {
   name: 'onlineUserState',
   props: ['data'],
   methods: {
-    ...mapActions('colorpicker', {
+    ...mapActions('modals', {
       openModal: 'open'
     })
   }  
@@ -20,7 +20,7 @@ export default {
 </script>
 
 <style scoped>
-.online-list-btn {
+.online-user-state {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,7 +35,7 @@ export default {
   box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
   transform: translateX(-50%);
 }
-.online-list-btn > span {
+.online-user-state > span {
   padding: 0 0.2rem;
 }
 </style>

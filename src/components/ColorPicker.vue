@@ -3,37 +3,46 @@
     <div class="colorPicker" ref="refDOM">
       <div 
       class="color" 
-      v-for="item in data"        
+      v-for="item in colorArray"        
       :class="{active: item.selected}"
       :style="{backgroundColor: item.value}"
-      @click="selectColor(item)" />
+      @click="changeColor(item)" />
     </div>
   </transition> 
 </template>
 
 <script>
-  export default {
-    name: 'colorPicker',
-    props: [
-      'data',
-      'selectColor',
-      'close',
-    ],
-    mounted() {      
-      window.addEventListener('click', this.handleClickOutside);
-    },
-    beforeDestroy() {
-      window.removeEventListener('click', this.handleClickOutside);
-    },
-    methods: {
-      handleClickOutside(e) {
-        if(!this.$refs.refDOM.contains(e.target) 
-            && e.target.className != 'material-icons'){
-          this.close();
-        }        
-      }
+import { mapState, mapActions } from 'vuex'
+
+export default {
+  name: 'colorPicker',
+  mounted() {      
+    window.addEventListener('click', this.handleClickOutside);
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.handleClickOutside);
+  },
+  computed:{
+    ...mapState([
+      'colorpicker'
+    ]),
+    colorArray() {
+      return this.colorpicker.data;
+    }
+  }, 
+  methods: {
+    ...mapActions([
+      'changeColor',
+      'close'
+    ]),
+    handleClickOutside(e) {
+      if(!this.$refs.refDOM.contains(e.target) 
+          && e.target.className != 'material-icons'){
+        this.close();
+      }        
     }
   }
+}
 </script>
 
 <style scoped>

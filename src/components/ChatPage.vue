@@ -10,7 +10,7 @@
     
     <color-picker v-if="colorpicker.visible" />        
 
-    <div class="online-list-btn" @click="modals.onlineUsers.visible = true">
+    <div class="online-list-btn" @click="openModal('onlineUsers')">
        <i class="material-icons">person</i>
        <span>{{online}}</span>
     </div>    
@@ -54,7 +54,7 @@
         @keyup.enter="sendChat(newChat)"
         placeholder="Say something...">
       <div class="btn-group">
-        <button class="btn" @click="modals.photoUpload.visible = true" :style="{color: mainColor}">add photo</button>
+        <button class="btn" @click="openModal('photoUpload')" :style="{color: mainColor}">add photo</button>
         <button class="btn" @click="sendChat(newChat)" :style="{backgroundColor: mainColor}">Send</button>    
       </div>             
     </div> 
@@ -64,18 +64,18 @@
         v-if="modals.photoUpload.visible"
         :color="mainColor"      
         :sendImage="sendImage" 
-        :modalClose="modalClose" />
+        :close="closeModal" />
       <online-users 
         v-if="modals.onlineUsers.visible"
         :color="mainColor"
         :data="onlineList"
-        :modalClose="modalClose" />
+        :close="closeModal" />
     </transition> 
 
     <view-original 
       v-if="modals.viewOriginal.visible"
       :img="modals.viewOriginal.img"
-      :modalClose="modalClose" />
+      :close="closeModal" />
 
   </div>
 </template>
@@ -119,20 +119,7 @@ export default {
   ],
   data() {
     return {     
-      showOnline: false,
       newChat: '',
-      modals: {
-        photoUpload: {
-          visible: false
-        },
-        viewOriginal: {
-          visible: false,
-          img: ''
-        },
-        onlineUsers: {
-          visible: false,
-        }
-      }
     }
   },
   firebase: {
@@ -144,6 +131,7 @@ export default {
     ...mapState([
       'app',
       'colorpicker',
+      'modals',
     ]),
     ...mapGetters('colorpicker', {
       mainColor: 'selectedColor'
@@ -163,6 +151,11 @@ export default {
     ...mapActions('colorpicker', {
       openColorpicker: 'open',
     }),
+    ...mapActions('modals', {
+      openModal: 'open',
+      viewOriginal: 'viewOriginal',
+      closeModal: 'close',
+    }),
     sendChat(data) {
       if(data != ''){
         this.pushChat(`<div>${XSSfilter(data)}</div>`);
@@ -179,7 +172,7 @@ export default {
       } else{
         this.pushChat(`<img src="${obj.data}" />`);
       }
-      this.modalClose();
+      this.closeModal();
     },
     pushChat(content) {
       chats.push({
@@ -188,14 +181,11 @@ export default {
         time: new Date().toString()
       });
     },
-    modalClose() {
-      Object.keys(this.modals).forEach(key => { this.modals[key].visible = false });
-    },
     contentClick(e) {
-      // when image Click
+      // when img Click
       if(e.target.childNodes[0].localName == 'img'){
-        this.modals.viewOriginal.img = e.target.childNodes[0].src;
-        this.modals.viewOriginal.visible = true;
+        this.viewOriginal(e.target.childNodes[0].src);
+        this.openModal('viewOriginal');
       }
     }
   },

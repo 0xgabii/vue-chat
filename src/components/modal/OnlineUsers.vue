@@ -3,7 +3,7 @@
     <div class="modal-wrapper">
       <div class="modal-header">
         <h3>Online Users</h3>        
-        <span class="close" @click="modalClose"><i class="material-icons">close</i></span>
+        <span class="close" @click="close"><i class="material-icons">close</i></span>
       </div>
       <div class="modal-content">                
         <div class="user" v-for="item in data" :style="{backgroundColor: color}">
@@ -21,7 +21,7 @@
     props: [
       'data',
       'color',
-      'modalClose'
+      'close'
     ],    
   }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <transition name="view">
     <div class="viewOriginal">
-      <img :src="img" @click="modalClose" alt="originalImage">
+      <img :src="img" @click="close" alt="originalImage">
     </div>
   </transition>
 </template>
@@ -11,7 +11,7 @@ export default {
   name: 'vieworiginal',
   props: [
     'img',
-    'modalClose'
+    'close'
   ],
 }
 </script>

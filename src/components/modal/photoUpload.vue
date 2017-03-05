@@ -3,7 +3,7 @@
     <div class="modal-wrapper">
       <div class="modal-header">
         <h3>Add Photo</h3>        
-        <span class="close" @click="modalClose"><i class="material-icons">close</i></span>
+        <span class="close" @click="close"><i class="material-icons">close</i></span>
       </div>
       <div class="modal-content">                
 
@@ -38,7 +38,7 @@
 
       </div>
       <div class="modal-footer">
-        <button @click="modalClose" :style="{color: color}">cancel</button>
+        <button @click="close" :style="{color: color}">cancel</button>
         <button @click="photoUpload" :style="{backgroundColor: color}">Send</button>
       </div>
     </div>
@@ -53,7 +53,7 @@ const toast = new siiimpleToast();
 export default {
   name: 'photoupload',
   props: [
-    'modalClose',
+    'close',
     'sendImage',
     'color',
   ],

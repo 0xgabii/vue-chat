@@ -1,18 +1,14 @@
 <template>
   <div class="chat-page">
     <header :style="{backgroundColor: mainColor}">      
-      <span @click="colorPicker.visible = true">
+      <span @click="colorpicker.visible = true">
         <i class="material-icons">color_lens</i>
       </span>
       <h3>Vue-Chat</h3>
       <button @click="auth">Logout</button>
     </header>
     
-    <color-picker 
-      v-if="colorPicker.visible"
-      :data="colorPicker.data"
-      :selectColor="changeMainColor"
-      :close="() => { colorPicker.visible = false}" />        
+    <color-picker v-if="colorpicker.visible" />        
 
     <div class="online-list-btn" @click="modals.onlineUsers.visible = true">
        <i class="material-icons">person</i>
@@ -85,7 +81,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import _ from 'lodash'
 import Firebase from '../firebaseHelper'
 
@@ -122,48 +118,7 @@ export default {
     'auth',
   ],
   data() {
-    return {
-      colorPicker: {
-        visible: false,
-        data: [
-          {
-            value: '#673ab7',
-            selected: true,
-          },
-          {
-            value: '#ff9800',
-            selected: false,
-          },
-          {
-            value: '#03a9f4',
-            selected: false,
-          },
-          {
-            value: '#cddc39',
-            selected: false,
-          },
-          {
-            value: '#009688',
-            selected: false,
-          },
-          {
-            value: '#e91e63',
-            selected: false,
-          },
-          {
-            value: '#607d8b',
-            selected: false,
-          },
-          {
-            value: '#795548',
-            selected: false,
-          },
-          {
-            value: '#ff5722',
-            selected: false,
-          }
-        ]
-      },
+    return {     
       showOnline: false,
       newChat: '',
       modals: {
@@ -187,8 +142,12 @@ export default {
   },
   computed: {
     ...mapState([
-      'app'
+      'app',
+      'colorpicker',
     ]),
+    ...mapGetters({
+      mainColor: 'selectedColor'
+    }),
     // lodash
     _() {
       return _;
@@ -199,9 +158,6 @@ export default {
     online() {
       return this.onlineList.length;
     },
-    mainColor() {
-      return this.colorPicker.data.filter(data => data.selected == true)[0].value;
-    }
   },
   methods: {
     sendChat(data) {
@@ -228,14 +184,9 @@ export default {
         content: content,
         time: new Date().toString()
       });
-    },    
+    },
     modalClose() {
       Object.keys(this.modals).forEach(key => { this.modals[key].visible = false });
-    },
-    changeMainColor(item) {      
-      this.colorPicker.data.forEach(data => {
-        data.selected = (data == item ? true : false);
-      });
     },
     contentClick(e) {
       // when image Click

@@ -14,6 +14,8 @@ import { mapActions, mapState } from 'vuex'
 import LandingPage from './components/LandingPage'
 import ChatPage from './components/ChatPage'
 
+require('./style/modal.css')
+
 export default {
   name: 'app',
   created() {

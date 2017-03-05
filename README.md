@@ -1,6 +1,12 @@
 # vue-chat
 
-> Vue.js Chat
+![gif](example.gif "example gif")
+
+Vue.js Chat with Firebase
+
+## Demo
+
+[https://vue-chat-77b39.firebaseapp.com](https://vue-chat-77b39.firebaseapp.com)
 
 ## Build Setup
 

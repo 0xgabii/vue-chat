@@ -40,6 +40,7 @@ import ChatPageHeader from './Header';
 import ColorPicker from './ColorPicker'
 import OnlineUserState from './OnlineUserState'
 import ChatList from './ChatList'
+import UploadProgress from './UploadProgress'
 import TypeChat from './TypeChat'
 // modals
 import PhotoUpload from '../modal/PhotoUpload'
@@ -161,6 +162,7 @@ export default {
     ColorPicker,
     OnlineUserState,
     ChatList,
+    UploadProgress,
     TypeChat,
     PhotoUpload,
     ViewOriginal,

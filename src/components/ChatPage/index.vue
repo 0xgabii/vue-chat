@@ -33,6 +33,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
+import siiimpleToast from 'siiimple-toast'
 import Firebase from '../../firebaseHelper'
 
 import ChatPageHeader from './Header';
@@ -44,6 +45,9 @@ import TypeChat from './TypeChat'
 import PhotoUpload from '../modal/PhotoUpload'
 import ViewOriginal from '../modal/ViewOriginal'
 import OnlineUsers from '../modal/OnlineUsers'
+
+// toast
+const toast = new siiimpleToast();
 
 // firebase
 const database = Firebase.database();
@@ -109,9 +113,36 @@ export default {
       if(obj.type == 'file'){
         const file = obj.data;
         const filename = file.name;
-        storageRef.child('images/' + filename).put(file).then(snapshot => {
-          this.pushChat(`<img src="${snapshot.downloadURL}" />`);
-        });        
+        const uploadTask = storageRef.child('images/' + filename).put(file);          
+        // show progress
+        uploadTask.on(Firebase.storage.TaskEvent.STATE_CHANGED, snapshot => {
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+          switch (snapshot.state) {
+            case Firebase.storage.TaskState.PAUSED: // or 'paused'
+              console.log('Upload is paused');
+              break;
+            case Firebase.storage.TaskState.RUNNING: // or 'running'
+              console.log('Upload is running');
+              break;
+          }
+        }, error => {
+          switch (error.code) {
+            case 'storage/unauthorized':
+              toast.alert('User doesn\'t have permission to access the object');
+              break;
+            case 'storage/canceled':
+              toast.message('User canceled the upload');
+              break;
+            case 'storage/unknown':
+              toast.alert('Unknown error occurred, inspect error.serverResponse');        
+              break;
+          }
+        // if success
+        }, () => {          
+          this.pushChat(`<img src="${uploadTask.snapshot.downloadURL}" />`);
+        });
       } else{
         this.pushChat(`<img src="${obj.data}" />`);
       }

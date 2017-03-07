@@ -8,6 +8,8 @@
 
     <chat-list :data="chatList" />
 
+    <upload-progress />
+
     <type-chat :sendChat="sendChat" />
 
     <transition name="modal">

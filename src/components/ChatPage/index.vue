@@ -61,12 +61,6 @@ const online = database.ref('online');
 const storageRef = Firebase.storage().ref();
 
 // scroll to bottom
-chats.on('child_added', data => {
-  setTimeout(() => {
-    scrollBottom();
-  });
-});
-
 const scrollBottom = () => {
   const chatlist = document.querySelector('.chat-list');
   chatlist.scrollTop = chatlist.scrollHeight;
@@ -150,6 +144,10 @@ export default {
         user: this.myAccount.uid,
         content: content,
         time: new Date().toString()
+      });
+      // scroll to bottom
+      setTimeout(() => {
+        scrollBottom();
       });
     },    
   },

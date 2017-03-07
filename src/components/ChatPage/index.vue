@@ -106,6 +106,9 @@ export default {
       viewOriginal: 'viewOriginal',
       closeModal: 'close',
     }),
+    ...mapActions('uploadprogress', [
+      'updateProgress'
+    ]),
     sendChat(data) {
       if(data != ''){
         this.pushChat(`<div>${XSSfilter(data)}</div>`);
@@ -118,18 +121,9 @@ export default {
         const filename = file.name;
         const uploadTask = storageRef.child('images/' + filename).put(file);          
         // show progress
-        uploadTask.on(Firebase.storage.TaskEvent.STATE_CHANGED, snapshot => {
-          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-          var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('Upload is ' + progress + '% done');
-          switch (snapshot.state) {
-            case Firebase.storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused');
-              break;
-            case Firebase.storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload is running');
-              break;
-          }
+        uploadTask.on(Firebase.storage.TaskEvent.STATE_CHANGED, snapshot => {          
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          this.updateProgress(progress);
         }, error => {
           switch (error.code) {
             case 'storage/unauthorized':

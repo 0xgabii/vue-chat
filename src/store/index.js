@@ -5,6 +5,7 @@ import 'es6-promise/auto'; // promise polyfill for IE11
 import app from './modules/app';
 import colorpicker from './modules/colorpicker';
 import modals from './modules/modals';
+import uploadprogress from './modules/uploadprogress';
 
 Vue.use(Vuex);
 
@@ -13,5 +14,6 @@ export default new Vuex.Store({
     app,    
     colorpicker,
     modals,
+    uploadprogress,
   }
 });

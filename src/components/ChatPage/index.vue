@@ -6,7 +6,10 @@
 
     <online-user-state :data="online" />
 
-    <chat-list :data="chatList" />
+    <chat-list 
+      :data="chatList"
+      :userList="userList"
+    />
 
     <upload-progress />
 

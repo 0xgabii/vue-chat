@@ -38,7 +38,10 @@ import _ from 'lodash';
 
 export default {
   name: 'chatList',
-  props: ['data'],
+  props: [
+    'data',
+    'userList'
+  ],
   computed: {
     ...mapState([
       'app',

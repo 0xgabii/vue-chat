@@ -1,33 +1,15 @@
 # vue-chat
 
-![gif](example.gif "example gif")
-
-Vue.js Chat with Firebase
+> Vue.js Chat with Firebase
 
 ## Demo
+
+![gif](example.gif "example gif")
 
 [https://vue-chat-77b39.firebaseapp.com](https://vue-chat-77b39.firebaseapp.com)
 
 ## Used
 
 - Vue, Vuex
-- vuefire([github](https://github.com/vuejs/vuefire)) : Firebase bindings for Vue.js
+- vuefire([github](https://github.com/vuejs/vuefire)): Firebase bindings for Vue.js
 - Firebase
-
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:7777
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
